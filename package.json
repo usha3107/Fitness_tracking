@@ -1,0 +1,25 @@
+{
+  "name": "fitness_tracking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^7.4.0",
+    "express": "^5.2.1",
+    "prisma": "^7.4.0",
+    "zod": "^4.3.6"
+  }
+}
