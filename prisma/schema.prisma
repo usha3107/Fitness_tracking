@@ -1,0 +1,88 @@
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gym {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  capacity  Int
+  address   Json
+  members   Member[]
+  trainers  TrainerAssignment[]
+  
+  @@map("gyms")
+}
+
+model Member {
+  id             String       @id @default(cuid())
+  name           String
+  email          String       @unique
+  gymId          String
+  gym            Gym          @relation(fields: [gymId], references: [id])
+  membershipTier String
+  sessions       Session[]
+  metrics        Metric[]
+  joinedAt       DateTime     @default(now())
+
+  @@map("members")
+}
+
+model Trainer {
+  id            String              @id @default(cuid())
+  name          String
+  certification String
+  certificationExpiry DateTime?
+  assignments   TrainerAssignment[]
+
+  @@map("trainers")
+}
+
+model TrainerAssignment {
+  id        String   @id @default(cuid())
+  trainerId String
+  trainer   Trainer  @relation(fields: [trainerId], references: [id])
+  gymId     String
+  gym       Gym      @relation(fields: [gymId], references: [id])
+  assignedAt DateTime @default(now())
+
+  @@unique([trainerId, gymId])
+  @@map("trainer_assignments")
+}
+
+model Session {
+  id        String     @id @default(cuid())
+  memberId  String
+  member    Member     @relation(fields: [memberId], references: [id])
+  date      DateTime   @default(now())
+  exercises Exercise[]
+
+  @@map("sessions")
+}
+
+model Exercise {
+  id        String  @id @default(cuid())
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id])
+  type      String
+  data      Json
+
+  @@map("exercises")
+}
+
+model Metric {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
+  type      String
+  value     Float
+  timestamp DateTime @default(now())
+
+  @@map("metrics")
+}
